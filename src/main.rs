@@ -39,7 +39,7 @@ fn main() {
         style("[1/5]").bold().dim(),
         LOOKING_GLASS
     );
-    let mut resources = Resources::new();
+    let mut resources = Resources::default();
 
     let glass_material = resources.add_material(DielectricMaterial::new(1.5));
 

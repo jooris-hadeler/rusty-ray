@@ -1,5 +1,3 @@
-use std::f64::INFINITY;
-
 use crate::intr;
 use crate::random::THREAD_RNG;
 use crate::vector::Color;
@@ -67,7 +65,7 @@ impl Camera {
                 for _ in 0..self.sample_count {
                     let ray = self.ray(x, y);
 
-                    color += self.ray_color(scene, resources, ray, self.max_bounces);
+                    color += Self::ray_color(scene, resources, ray, self.max_bounces);
                 }
 
                 color *= sample_scale;
@@ -85,13 +83,13 @@ impl Camera {
     }
 
     /// Calculates the color of a ray in the scene.
-    fn ray_color(&self, scene: &Scene, resources: &Resources, ray: Ray, depth: u32) -> Color {
+    fn ray_color(scene: &Scene, resources: &Resources, ray: Ray, depth: u32) -> Color {
         if depth == 0 {
             return Color::ZERO;
         }
 
         // calculate intersection if there is no hit return scene background
-        let Some(hit) = scene.hit(&ray, intr!(0.001, INFINITY)) else {
+        let Some(hit) = scene.hit(&ray, intr!(0.001, f64::INFINITY)) else {
             return scene.background(ray.dir);
         };
 
@@ -106,7 +104,7 @@ impl Camera {
         };
 
         // calculate the color of the scattered ray
-        let scattered = self.ray_color(scene, resources, scatter_ray, depth - 1) * scattered;
+        let scattered = Self::ray_color(scene, resources, scatter_ray, depth - 1) * scattered;
 
         emitted + scattered
     }

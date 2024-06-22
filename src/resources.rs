@@ -2,7 +2,7 @@ use std::ops::Index;
 
 use crate::{material::Material, texture::Texture};
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 /// Resources that can be used a scene.
 pub struct Resources {
     /// A list of materials that can be assigned to objects in the scene.
@@ -12,14 +12,6 @@ pub struct Resources {
 }
 
 impl Resources {
-    /// Creates a new set of resources to be used in the rendering process.
-    pub fn new() -> Self {
-        Self {
-            materials: Vec::new(),
-            textures: Vec::new(),
-        }
-    }
-
     /// Adds a material to the resources and returns its identifier.
     pub fn add_material<M: Material + 'static>(&mut self, material: M) -> MaterialId {
         let id = MaterialId(self.materials.len());

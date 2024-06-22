@@ -2,7 +2,7 @@ use std::cell::RefCell;
 
 thread_local! {
     /// A thread-local random number generator.
-    pub static THREAD_RNG: RefCell<Random> = RefCell::new(Random::new(0xdeadbeef));
+    pub static THREAD_RNG: RefCell<Random> = const { RefCell::new(Random::new(0xdeadbeef)) };
 }
 
 #[derive(Debug)]

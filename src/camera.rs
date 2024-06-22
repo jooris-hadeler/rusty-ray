@@ -40,8 +40,23 @@ impl Camera {
         CameraBuilder::default()
     }
 
+    /// Returns the width of the image to render.
+    pub fn image_width(&self) -> u32 {
+        self.image_width
+    }
+
+    /// Returns the height of the image to render.
+    pub fn image_height(&self) -> u32 {
+        self.image_height
+    }
+
     /// Renders the scene from the camera's perspective.
-    pub fn render(&self, scene: &Scene, resources: &Resources) -> ImageBuffer {
+    pub fn render<F: Fn(u32)>(
+        &self,
+        scene: &Scene,
+        resources: &Resources,
+        callback: F,
+    ) -> ImageBuffer {
         let mut image = ImageBuffer::new(self.image_width, self.image_height);
 
         let sample_scale = 1.0 / self.sample_count as f64;
@@ -64,7 +79,7 @@ impl Camera {
                 pixel[2] = (color.z * 255.0).clamp(0.0, 255.0) as u8;
             }
 
-            println!("Scanline {} done", y + 1);
+            callback(y);
         }
 
         image

@@ -1,8 +1,7 @@
 use camera::Camera;
 use imgbuf::ImageBuffer;
-use materials::{
-    dielectric::DielectricMaterial, lambertian::LambertianMaterial,
-};
+use indicatif::{ProgressBar, ProgressStyle};
+use materials::{dielectric::DielectricMaterial, lambertian::LambertianMaterial};
 use objects::sphere::SphereObject;
 use resources::Resources;
 use scene::Scene;
@@ -56,8 +55,14 @@ fn main() {
         .with_sample_count(100)
         .build();
 
+    // Setup the progress bar.
+    let style = ProgressStyle::with_template("[{elapsed}] {wide_bar} {per_sec} ").unwrap();
+    let bar = ProgressBar::new(camera.image_height() as u64).with_style(style);
+
     // Render the scene with the camera and resources.
-    let fb = camera.render(&scene, &resources);
+    let fb = camera.render(&scene, &resources, |_| bar.inc(1));
+
+    bar.finish();
 
     // Save the framebuffer to a file.
     fb.save("output.png").unwrap();

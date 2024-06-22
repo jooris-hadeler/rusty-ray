@@ -21,6 +21,15 @@ macro_rules! vec3 {
 /// x is red, y is green, and z is blue.
 pub type Color = Vec3;
 
+impl Color {
+    /// Constant color with all components set to 0.
+    pub const WHITE: Color = Color {
+        x: 1.0,
+        y: 1.0,
+        z: 1.0,
+    };
+}
+
 /// A point in 3D space, with x, y, and z components.
 /// This is an alias for Vec3.
 pub type Point3 = Vec3;
@@ -104,6 +113,15 @@ impl Vec3 {
     /// Reflects the vector across a normal.
     pub fn reflect(&self, normal: Vec3) -> Vec3 {
         *self - normal * self.dot(normal) * 2.0
+    }
+
+    #[inline]
+    /// Refracts the vector through a surface with the given normal and refractive index.
+    pub fn refract(&self, normal: Vec3, etai_over_etat: f64) -> Vec3 {
+        let cos_theta = (-*self).dot(normal).min(1.0);
+        let r_out_perp = (*self + normal * cos_theta) * etai_over_etat;
+        let r_out_parallel = normal * -(1.0 - r_out_perp.len_sq()).abs().sqrt();
+        r_out_perp + r_out_parallel
     }
 }
 

@@ -1,10 +1,12 @@
 use std::f64::consts::PI;
 
 use crate::{
+    aabb::Aabb,
     hittable::Hittable,
     interval::Interval,
     ray::{Intersection, Ray},
     resources::MaterialId,
+    vec3,
     vector::Point3,
 };
 
@@ -17,15 +19,20 @@ pub struct SphereObject {
     radius: f64,
     /// The material of the sphere.
     material: MaterialId,
+    /// The bounding box of the sphere.
+    bounding_box: Aabb,
 }
 
 impl SphereObject {
     /// Create a new sphere object with the given center, radius, and material.
     pub fn new(center: Point3, radius: f64, material: MaterialId) -> Self {
+        let bounding_box = Self::calculate_aabb(center, radius);
+
         Self {
             center,
             radius,
             material,
+            bounding_box,
         }
     }
 
@@ -38,6 +45,14 @@ impl SphereObject {
         let v = theta / PI;
 
         (u, v)
+    }
+
+    /// Calculate the axis-aligned bounding box of the sphere.
+    fn calculate_aabb(center: Point3, radius: f64) -> Aabb {
+        let min = center - vec3!(radius, radius, radius);
+        let max = center + vec3!(radius, radius, radius);
+
+        Aabb::new(min, max)
     }
 }
 
@@ -82,5 +97,9 @@ impl Hittable for SphereObject {
             u,
             v,
         })
+    }
+
+    fn bounding_box(&self) -> Aabb {
+        self.bounding_box
     }
 }

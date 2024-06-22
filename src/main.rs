@@ -9,6 +9,7 @@ use scene::Scene;
 use textures::{image::ImageTexture, solid::SolidTexture};
 use vector::Vec3;
 
+pub mod aabb;
 pub mod bvh;
 pub mod camera;
 pub mod hittable;
@@ -80,7 +81,7 @@ fn main() {
         style("[3/5]").bold().dim(),
         CLIP
     );
-    // scene.build_bvh();
+    scene.build_bvh();
 
     // Setup the camera.
     println!(

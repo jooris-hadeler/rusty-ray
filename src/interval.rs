@@ -1,6 +1,6 @@
 #[macro_export]
 /// Create a new Interval with the given start and end.
-macro_rules! interval {
+macro_rules! intr {
     ($start:expr, $end:expr) => {
         $crate::interval::Interval {
             start: $start,
@@ -19,6 +19,12 @@ pub struct Interval {
 }
 
 impl Interval {
+    /// Constant empty interval.
+    pub const EMPTY: Self = Self {
+        start: f64::INFINITY,
+        end: f64::NEG_INFINITY,
+    };
+
     #[inline]
     /// Checks if the interval contains a value.
     pub fn contains(&self, value: f64) -> bool {

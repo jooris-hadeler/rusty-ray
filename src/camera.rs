@@ -1,10 +1,10 @@
 use std::f64::INFINITY;
 
+use crate::intr;
 use crate::random::THREAD_RNG;
 use crate::vector::Color;
 use crate::{
     imgbuf::ImageBuffer,
-    interval,
     ray::Ray,
     resources::Resources,
     scene::Scene,
@@ -91,7 +91,7 @@ impl Camera {
         }
 
         // calculate intersection if there is no hit return scene background
-        let Some(hit) = scene.hit(&ray, interval!(0.001, INFINITY)) else {
+        let Some(hit) = scene.hit(&ray, intr!(0.001, INFINITY)) else {
             return scene.background(ray.dir);
         };
 

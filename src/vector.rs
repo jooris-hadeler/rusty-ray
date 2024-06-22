@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Index, Mul, MulAssign, Neg, Sub, SubAssign};
 
 use crate::random::THREAD_RNG;
 
@@ -255,5 +255,20 @@ impl DivAssign<f64> for Vec3 {
     /// Divides this vector by a scalar.
     fn div_assign(&mut self, scalar: f64) {
         *self = *self / scalar;
+    }
+}
+
+impl Index<usize> for Vec3 {
+    type Output = f64;
+
+    #[inline]
+    /// Indexes into the vector.
+    fn index(&self, idx: usize) -> &Self::Output {
+        match idx {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => panic!("Invalid index"),
+        }
     }
 }

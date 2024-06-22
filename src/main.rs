@@ -44,9 +44,15 @@ fn main() {
     let glass_material = resources.add_material(DielectricMaterial::new(1.5));
 
     let rock_texture = resources.add_texture(ImageTexture::new(
-        ImageBuffer::load("textures/rock.png").expect("failed to load rock texture"),
+        ImageBuffer::load("textures/rock_albedo.png").expect("failed to load rock texture"),
     ));
-    let rock_material = resources.add_material(LambertianMaterial::new(rock_texture));
+    let rock_normal = resources.add_texture(ImageTexture::new(
+        ImageBuffer::load("textures/rock_normal.png").expect("failed to load rock normal map"),
+    ));
+    let rock_material = resources.add_material(LambertianMaterial::with_normal_map(
+        rock_texture,
+        rock_normal,
+    ));
 
     let green_texture = resources.add_texture(SolidTexture::new(vec3!(0.0, 1.0, 0.0)));
     let green_material = resources.add_material(LambertianMaterial::new(green_texture));
@@ -68,12 +74,8 @@ fn main() {
     let mut scene = Scene::new(sky_background);
 
     scene.add(SphereObject::new(vec3!(0, 0, -1), 0.5, glass_material));
-    scene.add(SphereObject::new(vec3!(0, 1, -1), 0.5, rock_material));
-    scene.add(SphereObject::new(
-        vec3!(0, -100.5, -1),
-        100.0,
-        green_material,
-    ));
+    scene.add(SphereObject::new(vec3!(0, 3, -1), 2.5, green_material));
+    scene.add(SphereObject::new(vec3!(0, -10.5, -1), 10.0, rock_material));
 
     // Build the scene with a bounding volume hierarchy.
     println!(

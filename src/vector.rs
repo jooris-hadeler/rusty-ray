@@ -55,6 +55,20 @@ impl Vec3 {
         z: 0.0,
     };
 
+    /// Constant vector with all components set to 1.
+    pub const ONE: Vec3 = Vec3 {
+        x: 1.0,
+        y: 1.0,
+        z: 1.0,
+    };
+
+    /// Constant vector pointing up.
+    pub const UP: Vec3 = Vec3 {
+        x: 0.0,
+        y: 1.0,
+        z: 0.0,
+    };
+
     /// Create a new Vec3 that lies inside the unit sphere.
     pub fn random_in_unit_sphere() -> Vec3 {
         THREAD_RNG.with(|rng| {
@@ -128,6 +142,21 @@ impl Vec3 {
         let r_out_perp = (*self + normal * cos_theta) * etai_over_etat;
         let r_out_parallel = normal * -(1.0 - r_out_perp.len_sq()).abs().sqrt();
         r_out_perp + r_out_parallel
+    }
+
+    #[inline]
+    /// Converts a normal vector from normal space to world space.
+    pub fn convert_to_world_space(world_normal: Vec3, normal: Vec3) -> Vec3 {
+        let unit_normal = world_normal.unit();
+
+        let u = Vec3::UP.cross(unit_normal).unit();
+        let v = unit_normal.cross(u).unit();
+
+        vec3!(
+            u.x * normal.x + v.x * normal.y + unit_normal.x * normal.z,
+            u.y * normal.x + v.y * normal.y + unit_normal.y * normal.z,
+            u.z * normal.x + v.z * normal.y + unit_normal.z * normal.z
+        )
     }
 }
 

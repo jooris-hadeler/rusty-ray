@@ -39,6 +39,33 @@ impl ImageBuffer {
         }
     }
 
+    /// Loads an image buffer from a file at the given path.
+    pub fn load<T: ToString>(path: T) -> Result<ImageBuffer, &'static str> {
+        let file = File::open(path.to_string()).map_err(|_| "failed to open file")?;
+
+        let decoder = png::Decoder::new(file);
+        let mut reader = decoder
+            .read_info()
+            .map_err(|_| "failed to read image info")?;
+
+        let mut data = vec![0; reader.output_buffer_size()];
+        let info = reader
+            .next_frame(&mut data)
+            .map_err(|_| "failed to read image data")?;
+
+        let bytes = &data[..info.buffer_size()];
+
+        if info.color_type != ColorType::Rgb {
+            return Err("image must be in RGB color type");
+        }
+
+        Ok(ImageBuffer {
+            width: info.width,
+            height: info.height,
+            data: bytes.into(),
+        })
+    }
+
     /// Saves the image buffer to a file at the given path.
     pub fn save<T: ToString>(self, path: T) -> Result<(), &'static str> {
         let file = File::create(path.to_string()).map_err(|_| "failed to create file")?;

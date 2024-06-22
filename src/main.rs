@@ -1,11 +1,12 @@
 use camera::Camera;
+use imgbuf::ImageBuffer;
 use materials::{
-    dielectric::DielectricMaterial, lambertian::LambertianMaterial, metal::MetalMaterial,
+    dielectric::DielectricMaterial, lambertian::LambertianMaterial,
 };
 use objects::sphere::SphereObject;
 use resources::Resources;
 use scene::Scene;
-use textures::solid::SolidTexture;
+use textures::{image::ImageTexture, solid::SolidTexture};
 
 pub mod bvh;
 pub mod camera;
@@ -32,7 +33,10 @@ fn main() {
     let material = resources.add_material(DielectricMaterial::new(1.5));
     scene.add(SphereObject::new(vec3!(0, 0, -1), 0.5, material));
 
-    let material = resources.add_material(MetalMaterial::new(vec3!(0.4, 0.4, 1.0), 0.0));
+    let texture = resources.add_texture(ImageTexture::new(
+        ImageBuffer::load("textures/rock.png").expect("failed to load rock texture"),
+    ));
+    let material = resources.add_material(LambertianMaterial::new(texture));
     scene.add(SphereObject::new(vec3!(0, 1, -1), 0.5, material));
 
     let texture = resources.add_texture(SolidTexture::new(vec3!(0.0, 1.0, 0.0)));

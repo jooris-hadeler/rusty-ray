@@ -8,6 +8,5 @@ opt-level = 2
 
 [dependencies]
 console = "0.15.8"
-fastrand = "2.1.0"
 indicatif = "0.17.8"
 png = "0.17.13"

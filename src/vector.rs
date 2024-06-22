@@ -1,5 +1,7 @@
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
+use crate::random::THREAD_RNG;
+
 #[macro_export]
 /// Create a new Vec3 with the given x, y, and z components.
 macro_rules! vec3 {
@@ -55,17 +57,21 @@ impl Vec3 {
 
     /// Create a new Vec3 that lies inside the unit sphere.
     pub fn random_in_unit_sphere() -> Vec3 {
-        loop {
-            let p = vec3!(
-                fastrand::f64() * 2.0 - 1.0,
-                fastrand::f64() * 2.0 - 1.0,
-                fastrand::f64() * 2.0 - 1.0
-            );
+        THREAD_RNG.with(|rng| {
+            let mut rng = rng.borrow_mut();
 
-            if p.len_sq() < 1.0 {
-                return p;
+            loop {
+                let p = vec3!(
+                    rng.random_f64() * 2.0 - 1.0,
+                    rng.random_f64() * 2.0 - 1.0,
+                    rng.random_f64() * 2.0 - 1.0
+                );
+
+                if p.len_sq() < 1.0 {
+                    return p;
+                }
             }
-        }
+        })
     }
 
     #[inline]

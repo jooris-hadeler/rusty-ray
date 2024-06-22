@@ -1,7 +1,7 @@
 use std::f64::INFINITY;
 
 use crate::hittable::Hittable;
-
+use crate::random::THREAD_RNG;
 use crate::vector::Color;
 use crate::{
     imgbuf::ImageBuffer,
@@ -114,8 +114,10 @@ impl Camera {
 
     /// Creates a ray from the camera through a pixel.
     fn ray(&self, x: u32, y: u32) -> Ray {
-        let offset_x = fastrand::f64() - 0.5;
-        let offset_y = fastrand::f64() - 0.5;
+        let (offset_x, offset_y) = THREAD_RNG.with(|rng| {
+            let mut rng = rng.borrow_mut();
+            (rng.random_f64() - 0.5, rng.random_f64() - 0.5)
+        });
 
         let pixel_sample = self.pixel_origin
             + self.pixel_offset_u * (x as f64 + offset_x)

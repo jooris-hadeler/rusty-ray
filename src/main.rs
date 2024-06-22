@@ -16,6 +16,7 @@ pub mod interval;
 pub mod material;
 pub mod materials;
 pub mod objects;
+pub mod random;
 pub mod ray;
 pub mod resources;
 pub mod scene;

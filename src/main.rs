@@ -7,6 +7,7 @@ use objects::sphere::SphereObject;
 use resources::Resources;
 use scene::Scene;
 use textures::{image::ImageTexture, solid::SolidTexture};
+use vector::Vec3;
 
 pub mod bvh;
 pub mod camera;
@@ -55,7 +56,15 @@ fn main() {
         style("[2/5]").bold().dim(),
         TRUCK
     );
-    let mut scene = Scene::new(vec3!(0.4, 0.7, 1));
+
+    let sky_background = |dir: Vec3| {
+        let unit_dir = dir.unit();
+        let a = 0.5 * (unit_dir.y + 1.0);
+
+        (1.0 - a) * vec3!(1, 1, 1) + a * vec3!(0.5, 0.7, 1.0)
+    };
+
+    let mut scene = Scene::new(sky_background);
 
     scene.add(SphereObject::new(vec3!(0, 0, -1), 0.5, glass_material));
     scene.add(SphereObject::new(vec3!(0, 1, -1), 0.5, rock_material));

@@ -4,7 +4,6 @@ use crate::{
     hittable::Hittable,
     interval::Interval,
     ray::{Intersection, Ray},
-    vec3,
     vector::{Color, Vec3},
 };
 
@@ -12,23 +11,22 @@ use crate::{
 /// An ID for an object in a scene.
 pub struct ObjectId(usize);
 
-#[derive(Debug)]
 /// A scene containing objects to be rendered.
 pub struct Scene {
     /// The objects in the scene.
     objects: Vec<Box<dyn Hittable>>,
-    /// The background color of the scene.
-    background: Color,
+    /// The function to calculate the background color of the scene.
+    background_func: Box<dyn Fn(Vec3) -> Color>,
     // /// The hierarchy of bounding volumes for the scene.
     // bvh: Option<Bvh>,
 }
 
 impl Scene {
     /// Creates a new scene with the given background color.
-    pub fn new(background: Color) -> Self {
+    pub fn new<F: Fn(Vec3) -> Color + 'static>(background: F) -> Self {
         Self {
             objects: Vec::new(),
-            background,
+            background_func: Box::new(background),
             // bvh: None,
         }
     }
@@ -48,16 +46,11 @@ impl Scene {
     #[inline]
     /// Get the background color of the scene.
     pub fn background(&self, dir: Vec3) -> Color {
-        let unit_dir = dir.unit();
-        let a = 0.5 * (unit_dir.y + 1.0);
-
-        (1.0 - a) * vec3!(1, 1, 1) + a * self.background
+        (self.background_func)(dir)
     }
-}
 
-impl Hittable for Scene {
     /// Checks for intersections between the ray and the objects in the scene.
-    fn hit(&self, ray: &Ray, mut time: Interval) -> Option<Intersection> {
+    pub fn hit(&self, ray: &Ray, mut time: Interval) -> Option<Intersection> {
         let mut closest = None;
 
         // Check each object in the scene for intersections.

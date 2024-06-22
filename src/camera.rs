@@ -1,6 +1,5 @@
 use std::f64::INFINITY;
 
-use crate::hittable::Hittable;
 use crate::random::THREAD_RNG;
 use crate::vector::Color;
 use crate::{
